@@ -153,25 +153,14 @@ public class TurtleSoup {
      * @param turtle the turtle context
      */
     public static void drawPersonalArt(Turtle turtle) {
-    	
-    	List<Integer> xpoints = new ArrayList<>();
-        List<Integer> ypoints = new ArrayList<>();
-        xpoints.add(0);
-        xpoints.add(100);
-        xpoints.add(80);
-        ypoints.add(0);
-        ypoints.add(20);
-        ypoints.add(66);
-        
-        List<Double> result = TurtleSoup.calculateHeadings(xpoints, ypoints);
-        int len = xpoints.size();
-        for (int i = 0; i < len-1; i++) {
-        	double diffX = (double)(xpoints.get(i)-ypoints.get(i));
-        	double diffY = (double)(xpoints.get(i+1)-ypoints.get(i+1));
-        	double z = Math.sqrt(diffX * diffX + diffY * diffY);
-        	turtle.turn(result.get(i));
-        	turtle.forward((int)Math.round(z));
-        }
+    	for (int i = 0; i < 10; i++) {
+    		drawRegularPolygon(turtle, 3, 50+i*10);
+    		turtle.turn(360.0/10.0);
+    	}
+    	for (int i = 0; i < 20; i++) {
+    		drawRegularPolygon(turtle, 6, 30+i*5);
+    		turtle.turn(360.0/20.0);
+    	}
     }
 
     
