@@ -15,7 +15,13 @@ public class TurtleSoup {
      * @param sideLength length of each side
      */
     public static void drawSquare(Turtle turtle, int sideLength) {
-        throw new RuntimeException("implement me!");
+    	turtle.forward(sideLength);
+    	turtle.turn(90);
+    	turtle.forward(sideLength);
+    	turtle.turn(90);
+    	turtle.forward(sideLength);
+    	turtle.turn(90);
+    	turtle.forward(sideLength);
     }
 
     /**
@@ -28,7 +34,8 @@ public class TurtleSoup {
      * @return angle in degrees, where 0 <= angle < 360
      */
     public static double calculateRegularPolygonAngle(int sides) {
-        throw new RuntimeException("implement me!");
+        double sidesDouble = (double)sides;
+        return 180.0-360.0/sidesDouble;
     }
 
     /**
@@ -42,7 +49,8 @@ public class TurtleSoup {
      * @return the integer number of sides
      */
     public static int calculatePolygonSidesFromAngle(double angle) {
-        throw new RuntimeException("implement me!");
+    	double sides = 360.0/(180.0-angle);
+        return (int)(Math.round(sides));
     }
 
     /**
@@ -55,7 +63,11 @@ public class TurtleSoup {
      * @param sideLength length of each side
      */
     public static void drawRegularPolygon(Turtle turtle, int sides, int sideLength) {
-        throw new RuntimeException("implement me!");
+        double angle = calculateRegularPolygonAngle(sides);
+        for (int i = 0; i < sides; i++) {
+        	turtle.forward(sideLength);
+        	turtle.turn(180.0-angle);
+        }
     }
 
     /**
@@ -79,7 +91,25 @@ public class TurtleSoup {
      */
     public static double calculateHeadingToPoint(double currentHeading, int currentX, int currentY,
                                                  int targetX, int targetY) {
-        throw new RuntimeException("implement me!");
+    	double diffX = (double)(targetX-currentX);
+    	double diffY = (double)(targetY-currentY);
+    	double z = Math.sqrt(diffX * diffX + diffY * diffY);
+    	double angle = Math.toDegrees(Math.acos(diffY/z));
+    	double sign = Math.toDegrees(Math.asin(diffX/z));
+    	
+    	double heading = 0;
+    	if (sign >= 0) {
+    		heading = angle - currentHeading;
+    	} else if (sign < 0) {
+    		angle = 360.0-angle;
+    		heading = angle - currentHeading;
+    	}
+    	
+    	if (heading >= 0) {
+    		return heading;
+    	} else {
+    		return 360.0+heading;
+    	}
     }
 
     /**
@@ -97,7 +127,21 @@ public class TurtleSoup {
      *         otherwise of size (# of points) - 1
      */
     public static List<Double> calculateHeadings(List<Integer> xCoords, List<Integer> yCoords) {
-        throw new RuntimeException("implement me!");
+        int len = xCoords.size();
+        int index = 0;
+        List<Double> headings = new ArrayList<Double>();
+        double currentHeading = 0;
+        while (index < len-1) {
+        	double nextHeading = calculateHeadingToPoint(currentHeading, xCoords.get(index), yCoords.get(index)
+        			, xCoords.get(index+1), yCoords.get(index+1));
+        	headings.add(nextHeading);
+        	currentHeading += nextHeading;
+        	if (currentHeading > 360.0) {
+        		currentHeading -= 360.0;
+        	}
+        	index++;
+        }
+        return headings;
     }
 
     /**
@@ -109,9 +153,28 @@ public class TurtleSoup {
      * @param turtle the turtle context
      */
     public static void drawPersonalArt(Turtle turtle) {
-        throw new RuntimeException("implement me!");
+    	
+    	List<Integer> xpoints = new ArrayList<>();
+        List<Integer> ypoints = new ArrayList<>();
+        xpoints.add(0);
+        xpoints.add(100);
+        xpoints.add(80);
+        ypoints.add(0);
+        ypoints.add(20);
+        ypoints.add(66);
+        
+        List<Double> result = TurtleSoup.calculateHeadings(xpoints, ypoints);
+        int len = xpoints.size();
+        for (int i = 0; i < len-1; i++) {
+        	double diffX = (double)(xpoints.get(i)-ypoints.get(i));
+        	double diffY = (double)(xpoints.get(i+1)-ypoints.get(i+1));
+        	double z = Math.sqrt(diffX * diffX + diffY * diffY);
+        	turtle.turn(result.get(i));
+        	turtle.forward((int)Math.round(z));
+        }
     }
 
+    
     /**
      * Main method.
      * 
@@ -122,8 +185,9 @@ public class TurtleSoup {
     public static void main(String args[]) {
         DrawableTurtle turtle = new DrawableTurtle();
 
-        drawSquare(turtle, 40);
-
+        drawPersonalArt(turtle);
+        //drawRegularPolygon(turtle, 3, 50);
+        
         // draw the window
         turtle.draw();
     }
